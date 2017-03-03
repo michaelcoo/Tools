@@ -130,7 +130,8 @@ public class RoundImageView extends ImageView {
                 scaledSrcBmp.getWidth() / 2,  
                 paint);  //只是画了一个圆形
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));  //设置设置两张图片相交时的模式，SRC_IN：显示相交部分上面图片的内容
-        canvas.drawBitmap(scaledSrcBmp, rect, rect, paint);  //以裁剪出来的scaledSrcBmp原图，画一个矩形和刚才的圆形相交
+        canvas.drawBitmap(scaledSrcBmp, rect, rect, paint);  //以裁剪出来的scaledSrcBmp原图，画一个矩形和刚才的圆形相交，
+        //（图片，裁剪区域，显示区域，画笔）
         bmp = null;  
         squareBitmap = null;  
         scaledSrcBmp = null;  
