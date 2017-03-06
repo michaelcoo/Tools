@@ -1,0 +1,78 @@
+ View.OnTouchListener mPhoneanswerlistener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Log.i(TAG, "into mPhoneanswerlistener onTouch ");
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    mFirstpointX = event.getX();
+                    mFirstpointY = event.getY();
+                    initData();
+                    if (!isTouchPhoneAnswerPicture(mFirstpointX, mFirstpointY)){
+                        Log.i(TAG,"is not touch phone answer picture");
+                        return false;
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    mLastpointX = event.getX();
+                    mLastpointY = event.getY();
+                    Log.i(TAG,"ACTION_DOWN =="+"mLastpointX =="+mLastpointX+" "+"mLastpointY =="+mLastpointY);
+                    if (mLastpointX > mPhoneanswer_width/2 && mLastpointY > mPhoneanswer_height/2){//display mPhoneanswer always
+                        setPhoneAnswerPicturePosition(mHome_positionY+(mLastpointY-mFirstpointY));
+                    }
+                    if ((mFirstpointY - mLastpointY) >= mCriticalValueTop ){
+                        mUnlockarrows.setVisibility(View.INVISIBLE);
+                    }else if ((mLastpointY - mFirstpointY) >= mCriticalValueBottom){
+                        setIncalluibg(true);
+                    }else {
+                        setIncalluibg(false);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    y = event.getY();
+                    x = event.getX();
+                    if ((mFirstpointY - y) >= mCriticalValueTop ){
+                        mAnswerFragment.onAnswer(VideoProfile.STATE_AUDIO_ONLY, getContext());
+                        mPhoneanswer.setVisibility(View.INVISIBLE);
+                    }else if ((y - mFirstpointY) >= mCriticalValueBottom){
+                        showDoroRejectingFragment(true);
+                        mPhoneanswer.setVisibility(View.INVISIBLE);
+                    }else if ((mFirstpointY - y) < mCriticalValueTop || (y - mFirstpointY) < mCriticalValueBottom){
+                        mUnlockarrows.setVisibility(View.VISIBLE);
+                        setPhoneAnswerPicturePosition(mHome_positionY);
+                    }
+                    break;
+            }
+            return true;
+        }
+    };
+    
+    
+    /**
+     * make sure we touch the phone icon 
+     */
+    private boolean isTouchPhoneAnswerPicture(float x , float y){
+        if (x > mHome_positionX && x < mHome_positionX + mPhoneanswer_width){
+            if (y > mHome_positionY && y < mHome_positionY + mPhoneanswer_height){
+                return true;
+            }
+        }
+        return false;
+    }    
+    
+
+    /**
+     * init data to get the phone icon 
+     * first display place and the icon width height*/
+    private void initData(){
+        mHome_positionX = mPhoneanswer.getX();//得到控件的初始位置
+        mHome_positionY = mPhoneanswer.getY();
+        mPhoneanswer_width = mPhoneanswer.getWidth();//得到控件的长宽
+        mPhoneanswer_height = mPhoneanswer.getHeight();
+        Log.i(TAG, "mHome_positionX =="+mHome_positionX+" "+"mHome_positionY =="+mHome_positionY
+                +" "+"mPhoneanswer_width =="+mPhoneanswer_width+" "+"mPhoneanswer_height =="+mPhoneanswer_height);
+    }
+    
+    //设置控件位置
+    private void setPhoneAnswerPicturePosition(float y){
+        mPhoneanswer.setY(y);
+    }    
