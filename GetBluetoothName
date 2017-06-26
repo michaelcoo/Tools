@@ -1,0 +1,30 @@
+import java.util.List;
+import android.bluetooth.BluetoothProfile;
+    
+    private void setBluetoothName() {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        int headset = bluetoothAdapter.getProfileConnectionState(BluetoothProfile.HEADSET);//蓝牙有三个通道，这里是获取使用语音通道的蓝牙设备
+        if(headset ==BluetoothProfile.STATE_CONNECTED){
+            bluetoothAdapter.getProfileProxy(this.getContext(), proxyListener, BluetoothProfile.HEADSET);
+        }
+    }
+    
+    private BluetoothProfile.ServiceListener proxyListener = new BluetoothProfile.ServiceListener() {
+
+        @Override
+        public void onServiceConnected(int profile, BluetoothProfile proxy) {
+            if (proxy != null) {
+                List<BluetoothDevice> connectedDevices = proxy.getConnectedDevices();
+                if (connectedDevices != null) {
+                    for (int i = 0; i < connectedDevices.size(); i++) {
+                        BluetoothDevice device = connectedDevices.get(i);
+                        mAudioButtonText.setText(device.getName());
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(int profile) {
+        }
+    };
